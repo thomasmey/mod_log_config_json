@@ -1,0 +1,28 @@
+name: Build Apache Module
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: httpd:2.4
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          apt-get update
+          apt-get install -y build-essential apache2-dev libapr1-dev libaprutil1-dev
+
+      - name: Build module
+        run: make
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mod_log_config
+          path: './.libs/mod_log_config.so'
